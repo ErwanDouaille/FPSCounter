@@ -14,7 +14,7 @@
    <string>FPSCounter</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QComboBox" name="comboBox">
+   <widget class="QComboBox" name="comboBoxBenchmark">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -28,9 +28,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>50</y>
+      <y>80</y>
       <width>621</width>
-      <height>471</height>
+      <height>441</height>
      </rect>
     </property>
    </widget>
@@ -47,7 +47,18 @@
      <string>PushButton</string>
     </property>
     <property name="icon">
-     <iconset theme="refresh"/>
+     <iconset theme="refresh">
+      <normaloff>.</normaloff>.</iconset>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBoxDataComputer">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>191</width>
+      <height>22</height>
+     </rect>
     </property>
    </widget>
   </widget>

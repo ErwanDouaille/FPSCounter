@@ -5,6 +5,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    initComputer();
     initView();
 }
 
@@ -13,17 +14,41 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::initComputer()
+{
+    m_dataComputerList.push_back(new DataComputerAverage(this));
+    m_dataComputerList.push_back(new DataComputerMedian(this));
+}
+
 void MainWindow::initView()
 {
     ui->setupUi(this);
     resetView();
-    connect(ui->comboBox, SIGNAL(activated(int)), this, SLOT(displayBench(int)));
+
+    connect(ui->comboBoxDataComputer, SIGNAL(activated(int)), this, SLOT(setCurrentDataComputer(int)));
+    connect(ui->comboBoxBenchmark, SIGNAL(activated(int)), this, SLOT(displayBench()));
+    connect(ui->refreshButton, SIGNAL(clicked(bool)), this, SLOT(resetData()));
+    connect(ui->refreshButton, SIGNAL(clicked(bool)), this, SLOT(resetView()));
     connect(ui->refreshButton, SIGNAL(clicked(bool)), this, SLOT(chooseDataToParse()));
     connect(this, SIGNAL(parseChanged()), this, SLOT(updateView()));
+    connect(this, SIGNAL(resetAll()), this, SLOT(resetData()));
+    connect(this, SIGNAL(resetAll()), this, SLOT(resetView()));
+
+
+    if(m_dataComputerList.isEmpty())
+        return;
+    for(DataComputer* dataComputer : m_dataComputerList)
+    {
+        ui->comboBoxDataComputer->addItem(dataComputer->className());
+    }
+    ui->comboBoxDataComputer->activated(0);
 }
 
-void MainWindow::displayBench(int id)
+void MainWindow::displayBench()
 {
+    int id = ui->comboBoxBenchmark->currentIndex();
+    if (id < 0)
+        return;
     QString result ;
     Benchmark* bench = m_benchmarkList.at(id);
     result += "Version : " + bench->getMonitoringVersion() + "\n";
@@ -32,12 +57,7 @@ void MainWindow::displayBench(int id)
     result += "Nb data : " + QString::number(bench->getNbLine()) + "\n";
     for (int i = 0; i < bench->getColumnSize(); i++)
     {
-
-        double sum = 0.0;
-        QList<double>* list = bench->getColumValue().at(i);
-//        std::for_each(list.rbegin(), list.rend(), [&](double n) { std::cout << n << std::endl;sum += n; });
-        sum = std::accumulate(list->begin(), list->end(), 0.0);
-        double value = (double)sum/(double)bench->getNbLine();
+        double value = m_currentDataComputer->compute(m_currentBenchmark, i);
         result += bench->getColumName().at(i) + " : "
                   + QString::number(value) + " "
                   + bench->getColumUnit().at(i)
@@ -48,9 +68,15 @@ void MainWindow::displayBench(int id)
 
 }
 
+void MainWindow::resetData()
+{
+    m_currentBenchmark = NULL;
+    m_benchmarkList.clear();
+}
+
 void MainWindow::resetView()
 {
-    ui->comboBox->clear();
+    ui->comboBoxBenchmark->clear();
     ui->textBrowser->clear();
 }
 
@@ -66,8 +92,8 @@ void MainWindow::updateView()
     if(m_benchmarkList.isEmpty())
         return;
     for(Benchmark* bench : m_benchmarkList)
-        ui->comboBox->addItem(bench->getDate() + bench->getGPU());
-    ui->comboBox->setCurrentIndex(0);
+        ui->comboBoxBenchmark->addItem(bench->getDate() + bench->getGPU());
+    ui->comboBoxBenchmark->activated(0);
 }
 
 void MainWindow::parseData(QString fileName)
@@ -79,10 +105,19 @@ void MainWindow::parseData(QString fileName)
     }
 
     QTextStream in(&file);
-    while (!in.atEnd())
+    bool error = false;
+    while (!in.atEnd() && !error)
     {
         QString line = in.readLine();
-        parseLine(line);
+        try
+        {
+            parseLine(line);
+        } catch (std::exception exception)
+        {
+            QMessageBox::warning(0, "Error", exception.what());
+            error = true;
+            emit resetAll();
+        }
     }
     file.close();
 }
@@ -103,14 +138,14 @@ void MainWindow::parseLine(QString line)
     if (lineID.compare("01") == 0)
     {
         if(!m_currentBenchmark)
-            return;
+             throw std::exception("Error while parsing hlm file, 00 data instruction is missing");
         m_currentBenchmark->setGPU(list.at(2));
     }
 
     if (lineID.compare("02") == 0)
     {
         if(!m_currentBenchmark)
-            return;
+            throw std::exception("Error while parsing hlm file, 00 data instruction is missing");
         m_currentBenchmark->setColumnSize(list.size() - 2);
         m_currentBenchmark->resetColumnValue();
         for(int i = 2; i < list.size(); i++)
@@ -120,7 +155,7 @@ void MainWindow::parseLine(QString line)
     if (lineID.compare("03") == 0)
     {
         if(!m_currentBenchmark)
-            return;
+            throw std::exception("Error while parsing hlm file, 00 data instruction is missing");
         m_currentBenchmark->addColumnUnit(list.at(3));
     }
 
@@ -128,6 +163,12 @@ void MainWindow::parseLine(QString line)
     {
         if(!m_currentBenchmark)
             return;
+        //At this point we ensure than every list has the same size
+        if (m_currentBenchmark->getColumName().size() != m_currentBenchmark->getColumnSize())
+            throw std::exception("Error while parsing hlm file, 02 data instruction is missing");
+        if (m_currentBenchmark->getColumUnit().size() != m_currentBenchmark->getColumnSize())
+            throw std::exception("Error while parsing hlm file, 03 data instruction is missing");
+
         for(int i = 2; i < list.size(); i++)
         {
             QString qStringValue = list.at(i);
@@ -139,4 +180,12 @@ void MainWindow::parseLine(QString line)
 
 
 
+}
+
+void MainWindow::setCurrentDataComputer(int id)
+{
+    if (id > m_dataComputerList.size())
+        return;
+    m_currentDataComputer = m_dataComputerList.at(id);
+    emit displayBench();
 }

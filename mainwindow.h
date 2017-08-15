@@ -13,6 +13,9 @@
 #include <thread>
 
 #include "benchmark.h"
+#include "datacomputer.h"
+#include "datacomputeraverage.h"
+#include "datacomputermedian.h"
 
 namespace Ui {
 class MainWindow;
@@ -27,15 +30,22 @@ public:
     ~MainWindow();
 
     void initView();
+    void initComputer();
+
 
 public slots:
-    void displayBench(int id);
+    void displayBench();
     void resetView();
+    void resetData();
     void updateView();
     void chooseDataToParse();
+    void setCurrentDataComputer(int id);
+
 
 signals:
     void parseChanged();
+    void resetAll();
+    void updateBenchmarkView();
 
 private:
     Ui::MainWindow *ui;
@@ -43,6 +53,8 @@ private:
     void parseData(QString fileName);
     void parseLine(QString line);
 
+    DataComputer * m_currentDataComputer;
+    QList<DataComputer*> m_dataComputerList;
     Benchmark * m_currentBenchmark;
     QList<Benchmark*> m_benchmarkList;
 

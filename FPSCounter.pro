@@ -27,12 +27,16 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     benchmark.cpp \
-    datacomputer.cpp
+    datacomputer.cpp \
+    datacomputeraverage.cpp \
+    datacomputermedian.cpp
 
 HEADERS += \
         mainwindow.h \
     benchmark.h \
-    datacomputer.h
+    datacomputer.h \
+    datacomputeraverage.h \
+    datacomputermedian.h
 
 FORMS += \
         mainwindow.ui
