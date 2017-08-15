@@ -12,3 +12,8 @@ double DataComputerMedian::compute(Benchmark* bench, int i)
     int id = list->size()/2 + list->size()%2;
     return list->at(id);
 }
+
+void DataComputerMedian::setup()
+{
+
+}

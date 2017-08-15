@@ -9,6 +9,7 @@ class DataComputerAverage : public DataComputer
 public:
     DataComputerAverage(QObject *parent = nullptr);
 
+    virtual void setup();
     virtual double compute(Benchmark* bench, int i);
 };
 

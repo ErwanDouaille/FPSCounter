@@ -10,6 +10,7 @@ class DataComputerMedian : public DataComputer
 public:
     DataComputerMedian(QObject *parent = nullptr);
 
+    virtual void setup();
     virtual double compute(Benchmark* bench, int i);
 };
 

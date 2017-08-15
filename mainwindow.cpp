@@ -187,5 +187,6 @@ void MainWindow::setCurrentDataComputer(int id)
     if (id > m_dataComputerList.size())
         return;
     m_currentDataComputer = m_dataComputerList.at(id);
+
     emit displayBench();
 }

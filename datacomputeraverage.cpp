@@ -11,3 +11,8 @@ double DataComputerAverage::compute(Benchmark* bench, int i)
     double sum = std::accumulate(list->begin(), list->end(), 0.0);
     return (double)sum/(double)bench->getNbLine();
 }
+
+void DataComputerAverage::setup()
+{
+
+}
