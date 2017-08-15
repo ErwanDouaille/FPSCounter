@@ -41,15 +41,15 @@ QList<QString> Benchmark::getColumUnit()
     return m_columnUnit;
 }
 
-QList<double> Benchmark::getColumValue()
+QList<QList<double>*> Benchmark::getColumValue()
 {
     return m_columnValue;
 }
 
-double Benchmark::getColumValue(int i)
+QList<double>* Benchmark::getColumValue(int i)
 {
     if (i > m_columnValue.size())
-        return 0.0;
+        return new QList<double>();
     return m_columnValue.at(i);
 }
 
@@ -67,6 +67,11 @@ QString Benchmark::getColumName(int i)
     return m_columnName.at(i);
 }
 
+QString Benchmark::getDate()
+{
+    return m_date;
+}
+
 void Benchmark::addColumnName(QString name)
 {
     m_columnName.push_back(name);
@@ -79,15 +84,15 @@ void Benchmark::addColumnUnit(QString name)
 
 void Benchmark::addColumnValue(int i, double value)
 {
-    double intPastValue = m_columnValue.at(i);
-    m_columnValue.replace(i, intPastValue + value);
+    QList<double>* valueList = m_columnValue.at(i);
+    valueList->push_back(value);
 }
 
 void Benchmark::resetColumnValue()
 {
     m_columnValue.clear();
     for(int i = 0; i < m_columnSize; i++)
-        m_columnValue.push_back(0);
+        m_columnValue.push_back(new QList<double>());
 }
 
 void Benchmark::setMonitoringVersion(QString name)
@@ -103,4 +108,9 @@ void Benchmark::setGPU(QString name)
 void Benchmark::setColumnSize(int size)
 {
     m_columnSize = size;
+}
+
+void Benchmark::setDate(QString date)
+{
+    m_date = date;
 }

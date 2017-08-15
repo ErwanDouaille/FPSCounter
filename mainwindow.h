@@ -26,10 +26,21 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    void initView();
+
+public slots:
+    void displayBench(int id);
+    void resetView();
+    void updateView();
+    void chooseDataToParse();
+
+signals:
+    void parseChanged();
+
 private:
     Ui::MainWindow *ui;
 
-    void parseData();
+    void parseData(QString fileName);
     void parseLine(QString line);
 
     Benchmark * m_currentBenchmark;

@@ -26,11 +26,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    benchmark.cpp
+    benchmark.cpp \
+    datacomputer.cpp
 
 HEADERS += \
         mainwindow.h \
-    benchmark.h
+    benchmark.h \
+    datacomputer.h
 
 FORMS += \
         mainwindow.ui

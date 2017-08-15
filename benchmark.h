@@ -18,15 +18,17 @@ public:
     int getNbLine();
     QList<QString> getColumName();
     QList<QString> getColumUnit();
-    QList<double> getColumValue();
-    double getColumValue(int i);
+    QList<QList<double>*> getColumValue();
+    QList<double>* getColumValue(int i);
     QString getColumUnit(int i);
     QString getColumName(int i);
+    QString getDate();
 
     void incrementNbLine();
     void resetColumnValue();
     void setMonitoringVersion(QString name);
     void setGPU(QString name);
+    void setDate(QString date);
     void setColumnSize(int size);
     void addColumnName(QString name);
     void addColumnUnit(QString name);
@@ -35,11 +37,12 @@ public:
 protected:
     QString m_monitoringVersion;
     QString m_gpu;
+    QString m_date;
     int m_columnSize;
     int m_nbLine;
     QList<QString> m_columnName;
     QList<QString> m_columnUnit;
-    QList<double> m_columnValue;
+    QList<QList<double>*> m_columnValue;
 };
 
 #endif // BENCHMARK_H
