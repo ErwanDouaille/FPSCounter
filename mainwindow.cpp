@@ -82,7 +82,7 @@ void MainWindow::resetView()
 
 void MainWindow::chooseDataToParse()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open RivaTuner hardware monitoring log file"), "C:\Users\edoudaille\Desktop", tr("Bench Data (*.hml)"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open RivaTuner hardware monitoring log file"), "", tr("Bench Data (*.hml)"));
     parseData(fileName);
     emit parseChanged();
 }
@@ -138,14 +138,14 @@ void MainWindow::parseLine(QString line)
     if (lineID.compare("01") == 0)
     {
         if(!m_currentBenchmark)
-             throw std::exception("Error while parsing hlm file, 00 data instruction is missing");
+             throw std::runtime_error("Error while parsing hlm file, 00 data instruction is missing");
         m_currentBenchmark->setGPU(list.at(2));
     }
 
     if (lineID.compare("02") == 0)
     {
         if(!m_currentBenchmark)
-            throw std::exception("Error while parsing hlm file, 00 data instruction is missing");
+            throw std::runtime_error("Error while parsing hlm file, 00 data instruction is missing");
         m_currentBenchmark->setColumnSize(list.size() - 2);
         m_currentBenchmark->resetColumnValue();
         for(int i = 2; i < list.size(); i++)
@@ -155,7 +155,7 @@ void MainWindow::parseLine(QString line)
     if (lineID.compare("03") == 0)
     {
         if(!m_currentBenchmark)
-            throw std::exception("Error while parsing hlm file, 00 data instruction is missing");
+            throw std::runtime_error("Error while parsing hlm file, 00 data instruction is missing");
         m_currentBenchmark->addColumnUnit(list.at(3));
     }
 
@@ -165,9 +165,9 @@ void MainWindow::parseLine(QString line)
             return;
         //At this point we ensure than every list has the same size
         if (m_currentBenchmark->getColumName().size() != m_currentBenchmark->getColumnSize())
-            throw std::exception("Error while parsing hlm file, 02 data instruction is missing");
+            throw std::runtime_error("Error while parsing hlm file, 02 data instruction is missing");
         if (m_currentBenchmark->getColumUnit().size() != m_currentBenchmark->getColumnSize())
-            throw std::exception("Error while parsing hlm file, 03 data instruction is missing");
+            throw std::runtime_error("Error while parsing hlm file, 03 data instruction is missing");
 
         for(int i = 2; i < list.size(); i++)
         {
