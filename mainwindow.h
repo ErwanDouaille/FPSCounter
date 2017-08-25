@@ -3,8 +3,6 @@
 
 #include <QMainWindow>
 #include <QFileDialog>
-#include <QMessageBox>
-#include <QTextStream>
 #include <QString>
 #include <QList>
 
@@ -16,6 +14,7 @@
 #include "datacomputer.h"
 #include "datacomputeraverage.h"
 #include "datacomputermedian.h"
+#include "hmlparser.h"
 
 namespace Ui {
 class MainWindow;
@@ -32,32 +31,24 @@ public:
     void initView();
     void initComputer();
 
+    HMLParser * getParser();
+
 
 public slots:
     void displayBench();
     void resetView();
-    void resetData();
     void updateView();
     void chooseDataToParse();
     void setCurrentDataComputer(int id);
 
-
 signals:
-    void parseChanged();
-    void resetAll();
     void updateBenchmarkView();
 
 private:
     Ui::MainWindow *ui;
-
-    void parseData(QString fileName);
-    void parseLine(QString line);
-
     DataComputer * m_currentDataComputer;
     QList<DataComputer*> m_dataComputerList;
-    Benchmark * m_currentBenchmark;
-    QList<Benchmark*> m_benchmarkList;
-
+    HMLParser * m_parser;
 
 };
 

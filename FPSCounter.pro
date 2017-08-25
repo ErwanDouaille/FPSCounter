@@ -29,14 +29,16 @@ SOURCES += \
     benchmark.cpp \
     datacomputer.cpp \
     datacomputeraverage.cpp \
-    datacomputermedian.cpp
+    datacomputermedian.cpp \
+    hmlparser.cpp
 
 HEADERS += \
         mainwindow.h \
     benchmark.h \
     datacomputer.h \
     datacomputeraverage.h \
-    datacomputermedian.h
+    datacomputermedian.h \
+    hmlparser.h
 
 FORMS += \
         mainwindow.ui
